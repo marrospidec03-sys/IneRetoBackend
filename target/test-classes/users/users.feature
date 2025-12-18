@@ -11,7 +11,7 @@ Feature: Gestión de Usuarios en ServeRest
     And match each response.usuarios == 
     """
     {
-      "nombre": "#string",
+      "nome": "#string",
       "email": "#string",
       "password": "#string",
       "administrador": "#string",
