@@ -57,3 +57,50 @@ Feature: Gestión de Usuarios en ServeRest
     Then status 200
     And match response.email == userEmail
     And match response._id == creadoId
+  
+  Scenario: Actualizar los datos de un usuario existente
+    # Primero creamos un usuario para tener un ID real que actualizar
+    * def randomId = java.lang.System.currentTimeMillis()
+    * def initialEmail = 'update_' + randomId + '@test.com'
+    
+    Given path 'usuarios'
+    And request { nome: "Usuario Original", email: "#(initialEmail)", password: "123", administrador: "true" }
+    When method POST
+    Then status 201
+    * def userId = response._id
+
+    # Ahora actualizamos el nombre de ese usuario
+    Given path 'usuarios', userId
+    And request 
+    """
+    {
+      "nome": "Usuario Editado Inetum",
+      "email": "#(initialEmail)",
+      "password": "newpassword123",
+      "administrador": "true"
+    }
+    """
+    When method PUT
+    Then status 200
+    And match response.message == 'Registro alterado com sucesso'
+
+Scenario: Eliminar un usuario del sistema
+    # Creamos uno rápido para borrarlo
+    * def randomId = java.lang.System.currentTimeMillis()
+    * def deleteEmail = 'delete_' + randomId + '@test.com'
+    
+    Given path 'usuarios'
+    And request { nome: "Usuario a Borrar", email: "#(deleteEmail)", password: "123", administrador: "true" }
+    When method POST
+    * def idToDelete = response._id
+
+    # Ejecutamos la eliminación
+    Given path 'usuarios', idToDelete
+    When method DELETE
+    Then status 200
+    And match response.message == 'Registro excluído com sucesso'
+    
+    # Verificación extra: Intentar buscarlo y confirmar que ya no existe (404)
+    Given path 'usuarios', idToDelete
+    When method GET
+    Then status 400  
