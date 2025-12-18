@@ -24,6 +24,7 @@ Feature: Gestión de Usuarios en ServeRest
     * def randomId = java.lang.System.currentTimeMillis()
     * def userEmail = 'test_' + randomId + '@inetum.com'
 
+    # 1. LISTAR USUARIOS
     Given path 'usuarios'
     And request 
     """
@@ -43,7 +44,7 @@ Feature: Gestión de Usuarios en ServeRest
     * def randomId = java.lang.System.currentTimeMillis()
     * def userEmail = 'inetum_' + randomId + '@test.com'
 
-    # 1. CREAR EL USUARIO
+    # 2. CREAR EL USUARIO
     Given path 'usuarios'
     And request { nome: "Test Inetum", email: "#(userEmail)", password: "123", administrador: "true" }
     When method POST
@@ -51,7 +52,7 @@ Feature: Gestión de Usuarios en ServeRest
     # Guardamos el ID que nos dio la API
     * def creadoId = response._id
 
-    # 2. BUSCAR EL USUARIO CREADO POR SU ID
+    # 3. BUSCAR EL USUARIO CREADO POR SU ID
     Given path 'usuarios', creadoId
     When method GET
     Then status 200
@@ -63,6 +64,7 @@ Feature: Gestión de Usuarios en ServeRest
     * def randomId = java.lang.System.currentTimeMillis()
     * def initialEmail = 'update_' + randomId + '@test.com'
     
+    # 4. ACTUALIZAR EL USUARIO CREADO POR SU ID
     Given path 'usuarios'
     And request { nome: "Usuario Original", email: "#(initialEmail)", password: "123", administrador: "true" }
     When method POST
@@ -94,7 +96,7 @@ Scenario: Eliminar un usuario del sistema
     When method POST
     * def idToDelete = response._id
 
-    # Ejecutamos la eliminación
+    # 5. ELIMINAR EL USUARIO 
     Given path 'usuarios', idToDelete
     When method DELETE
     Then status 200
